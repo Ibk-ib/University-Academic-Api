@@ -14,5 +14,8 @@
 
         public int Level { get; set; }
         public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+        public ICollection<Question> Questions { get; set; } = new List<Question>();
+        public ICollection<ExamAttempt> ExamAttempts { get; set; } = new List<ExamAttempt>();
+        public ICollection<Result> Results { get; set; } = new List<Result>();
     }
 }

@@ -14,5 +14,6 @@
 
         public string CorrectAnswer { get; set; } = string.Empty;
         public Course Course { get; set; } = null!;
+        public ICollection<ExamAnswer> ExamAnswers { get; set; } = new List<ExamAnswer>();
     }
 }

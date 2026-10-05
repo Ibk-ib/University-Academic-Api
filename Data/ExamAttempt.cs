@@ -15,5 +15,8 @@
             public string Grade { get; set; } = string.Empty;
 
             public decimal GradePoint { get; set; }
+            public Student Student { get; set; } = null!;
+            public Course Course { get; set; } = null!;
+            public ICollection<ExamAnswer> ExamAnswers { get; set; } = new List<ExamAnswer>();
     }
 }
