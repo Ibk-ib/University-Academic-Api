@@ -14,7 +14,7 @@ public class StudentsController(IStudentService studentService) : ControllerBase
     [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateStudentAsync(StudentCreateDto dto)
+    public async Task<IActionResult> CreateStudentAsync([FromForm]StudentCreateDto dto)
     {
         var result = await studentService.CreateStudentAsync(dto);
         return result.Success ? Ok(result) : BadRequest(result);
@@ -24,7 +24,7 @@ public class StudentsController(IStudentService studentService) : ControllerBase
     [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateStudent([FromRoute] Guid id, StudentCreateDto dto)
+    public async Task<IActionResult> UpdateStudent([FromRoute] Guid id, [FromBody]StudentCreateDto dto)
     {
         var result = await studentService.UpdateStudentAsync(id, dto);
         return result.Success ? Ok(result) : BadRequest(result);

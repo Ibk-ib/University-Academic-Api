@@ -8,4 +8,6 @@ public class StudentCreateDto
     public string MatricNumber { get; set; } = string.Empty;
     public string Department { get; set; } = string.Empty;
     public int Level { get; set; }
+
+    public IFormFile File { get; set; }
 }

@@ -8,37 +8,51 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
 {
     public async Task<ResponseModel<bool>> CreateStudentAsync(StudentCreateDto request)
     {
-
-        var checkIfStudentExists = await studentRepository.GetStudentByMatricNumberAsync(request.MatricNumber);
-
-        if (checkIfStudentExists == null)
+        try
         {
+
+            var checkIfStudentExists = await studentRepository.GetStudentByMatricNumberAsync(request.MatricNumber);
+
+            if (checkIfStudentExists != null)
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Message = "Student with the provided matric number already exists.",
+                    Data = false
+                };
+            }
+
+            var student = new Student
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email,
+                MatricNumber = request.MatricNumber,
+                Department = request.Department,
+                Level = request.Level
+            };
+
+            var result = await studentRepository.CreateStudentAsync(student);
+
+            return new ResponseModel<bool>
+            {
+                Success = result,
+                Message = result ? "Student created successfully." : "Failed to create student.",
+                Data = result
+            };
+        }
+        catch (Exception ex)
+        {
+
             return new ResponseModel<bool>
             {
                 Success = false,
-                Message = "Student with the provided matric number does not exist.",
-                Data = false
+                Message = "An error occurred while creating the student.",
+                Data = false,
+                Errors = new List<ApiError> { new ApiError { Code = "Exception", Message = ex.Message } }
             };
         }
-
-        var student = new Student
-        {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            Email = request.Email,
-            MatricNumber = request.MatricNumber,
-            Department = request.Department,
-            Level = request.Level
-        };
-
-        var result = await studentRepository.CreateStudentAsync(student);
-
-        return new ResponseModel<bool>
-        {
-            Success = result,
-            Message = result ? "Student created successfully." : "Failed to create student.",
-            Data = result
-        };
     }
 
     public async Task<ResponseModel<bool>> DeleteStudentAsync(Guid id)
