@@ -28,8 +28,33 @@ namespace UniversityAcademicApi.Controllers
                 Department = dto.Department,
                 Level = dto.Level
             };
+         
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
+            return Ok(student);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStudent(Guid id, StudentCreateDto dto)
+        {
+            var student = await _context.Students.FindAsync(id);
+
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            student.FirstName = dto.FirstName;
+            student.LastName = dto.LastName;
+            student.Email = dto.Email;
+            student.MatricNumber = dto.MatricNumber;
+            student.Department = dto.Department;
+            student.Level = dto.Level;
+
+            student.DateModified = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
             return Ok(student);
         }
     }
