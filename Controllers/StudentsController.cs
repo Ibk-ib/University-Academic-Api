@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UniversityAcademicApi.DTOs;
 using UniversityAcademicApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace UniversityAcademicApi.Controllers
 {
@@ -57,5 +58,13 @@ namespace UniversityAcademicApi.Controllers
 
             return Ok(student);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetStudents() {
+            var student = await _context.Students.ToListAsync();
+
+            return Ok(student);
+        }
+             
     }
 }
