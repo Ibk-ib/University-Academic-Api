@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace UniversityAcademicApi.Migrations
 {
     [DbContext(typeof(UniversityDbContext))]
-    [Migration("20261005150702_InitialCreate")]
+    [Migration("20261005154844_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -330,7 +330,7 @@ namespace UniversityAcademicApi.Migrations
                     b.HasOne("UniversityAcademicApi.Data.Question", "Question")
                         .WithMany("ExamAnswers")
                         .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ExamAttempt");

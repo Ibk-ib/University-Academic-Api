@@ -327,7 +327,7 @@ namespace UniversityAcademicApi.Migrations
                     b.HasOne("UniversityAcademicApi.Data.Question", "Question")
                         .WithMany("ExamAnswers")
                         .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ExamAttempt");

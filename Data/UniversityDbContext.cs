@@ -54,7 +54,8 @@ public class UniversityDbContext : DbContext
         modelBuilder.Entity<ExamAnswer>()
             .HasOne(a => a.Question)
             .WithMany(q => q.ExamAnswers)
-            .HasForeignKey(a => a.QuestionId);
+            .HasForeignKey(a => a.QuestionId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Result>()
             .HasOne(r => r.Student)
