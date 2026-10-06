@@ -1,61 +1,62 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using UniversityAcademicApi.DTOs;
-using UniversityAcademicApi.Data;
+using UniversityAcademicApi.Services;
 
-namespace UniversityAcademicApi.Controllers
+namespace UniversityAcademicApi.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class StudentsController(IStudentService studentService) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class StudentsController : ControllerBase
+
+
+    [HttpPost]
+    [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateStudentAsync(StudentCreateDto dto)
     {
-        private readonly UniversityDbContext _context;
+        var result = await studentService.CreateStudentAsync(dto);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
 
-        public StudentsController(UniversityDbContext context)
-        {
-            _context = context;
-        }
+    [HttpPut("{id}")]
+    [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateStudent([FromRoute] Guid id, StudentCreateDto dto)
+    {
+        var result = await studentService.UpdateStudentAsync(id, dto);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateStudent(StudentCreateDto dto)
-        {
-            var student = new Student
-            {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Email = dto.Email,
-                MatricNumber = dto.MatricNumber,
-                Department = dto.Department,
-                Level = dto.Level
-            };
-         
-            _context.Students.Add(student);
-            await _context.SaveChangesAsync();
-            return Ok(student);
-        }
+    [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteStudent([FromRoute] Guid id)
+    {
+        var result = await studentService.DeleteStudentAsync(id);
+        return result.Success ? Ok(result) : NotFound(result);
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStudent(Guid id, StudentCreateDto dto)
-        {
-            var student = await _context.Students.FindAsync(id);
+    [HttpGet]
+    [ProducesResponseType(typeof(ResponseModel<IEnumerable<StudentDto>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseModel<IEnumerable<StudentDto>>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ResponseModel<IEnumerable<StudentDto>>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetAllStudents()
+    {
+        var result = await studentService.GetAllStudentsAsync();
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
 
-            if (student == null)
-            {
-                return NotFound();
-            }
-
-            student.FirstName = dto.FirstName;
-            student.LastName = dto.LastName;
-            student.Email = dto.Email;
-            student.MatricNumber = dto.MatricNumber;
-            student.Department = dto.Department;
-            student.Level = dto.Level;
-
-            student.DateModified = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
-
-            return Ok(student);
-        }
+    [HttpGet("get-by-matric-number")]
+    [ProducesResponseType(typeof(ResponseModel<StudentDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseModel<StudentDto>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ResponseModel<StudentDto>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetStudentByMatricNumber([FromQuery] string matricNumber)
+    {
+        var result = await studentService.GetStudentByMatricNumberAsync(matricNumber);
+        return result.Success ? Ok(result) : NotFound(result);
     }
 }
