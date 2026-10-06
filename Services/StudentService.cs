@@ -4,7 +4,7 @@ using UniversityAcademicApi.Repositories;
 
 namespace UniversityAcademicApi.Services;
 
-public class StudentService(IStudentRepository studentRepository) : IStudentService
+public class StudentService(IStudentRepository studentRepository,ILogger<StudentService> logger) : IStudentService
 {
     public async Task<ResponseModel<bool>> CreateStudentAsync(StudentCreateDto request)
     {
@@ -44,13 +44,13 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
         }
         catch (Exception ex)
         {
-
+            logger.LogError(ex, "An error occurred while creating the student.");
             return new ResponseModel<bool>
             {
                 Success = false,
                 Message = "An error occurred while creating the student.",
                 Data = false,
-                Errors = new List<ApiError> { new ApiError { Code = "Exception", Message = ex.Message } }
+                Errors = new List<ApiError> { new ApiError { Code = "Exception", Message = "Please try again later." } }
             };
         }
     }
