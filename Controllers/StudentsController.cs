@@ -41,12 +41,24 @@ public class StudentsController(IStudentService studentService) : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(ResponseModel<IEnumerable<StudentDto>>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseModel<IEnumerable<StudentDto>>), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ResponseModel<IEnumerable<StudentDto>>), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetAllStudents()
+    [ProducesResponseType(typeof(ResponseModel<PagedResponse<StudentDto>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseModel<PagedResponse<StudentDto>>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetAllStudents(
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10)
     {
-        var result = await studentService.GetAllStudentsAsync();
+        if (pageNumber < 1)
+        {
+            return BadRequest("Page number must be greater than 0.");
+        }
+
+        if (pageSize < 1 || pageSize > 100)
+        {
+            return BadRequest("Page size must be between 1 and 100.");
+        }
+
+        var result = await studentService.GetAllStudentsAsync(pageNumber, pageSize);
+
         return result.Success ? Ok(result) : BadRequest(result);
     }
 

@@ -78,10 +78,13 @@ public class StudentService(IStudentRepository studentRepository,ILogger<Student
         };
     }
 
-    public async Task<ResponseModel<IEnumerable<StudentDto>>> GetAllStudentsAsync()
+    public async Task<ResponseModel<PagedResponse<StudentDto>>> GetAllStudentsAsync(
+    int pageNumber,
+    int pageSize)
     {
-        var students = await studentRepository.GetAllStudentsAsync();
-        var studentDtos = students.Select(s => new StudentDto
+        var result = await studentRepository.GetAllStudentsAsync(pageNumber, pageSize);
+
+        var studentDtos = result.Students.Select(s => new StudentDto
         {
             Id = s.Id,
             FirstName = s.FirstName,
@@ -90,13 +93,27 @@ public class StudentService(IStudentRepository studentRepository,ILogger<Student
             MatricNumber = s.MatricNumber,
             Department = s.Department,
             Level = s.Level
-        });
+        }).ToList();
 
-        return new ResponseModel<IEnumerable<StudentDto>>
+        var totalPages = (int)Math.Ceiling(
+            result.TotalCount / (double)pageSize);
+
+        var pagedResponse = new PagedResponse<StudentDto>
+        {
+            Items = studentDtos,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = result.TotalCount,
+            TotalPages = totalPages,
+            HasNextPage = pageNumber < totalPages,
+            HasPreviousPage = pageNumber > 1
+        };
+
+        return new ResponseModel<PagedResponse<StudentDto>>
         {
             Success = true,
             Message = "Students retrieved successfully.",
-            Data = studentDtos
+            Data = pagedResponse
         };
     }
 
