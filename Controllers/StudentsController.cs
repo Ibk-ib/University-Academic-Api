@@ -57,6 +57,7 @@ public class StudentsController(IStudentService studentService) : ControllerBase
             return BadRequest("Page size must be between 1 and 100.");
         }
 
+
         var result = await studentService.GetAllStudentsAsync(pageNumber, pageSize);
 
         return result.Success ? Ok(result) : BadRequest(result);

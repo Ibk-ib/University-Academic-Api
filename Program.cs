@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UniversityAcademicApi.Data;
+using UniversityAcademicApi.Middleware;
 using UniversityAcademicApi.Repositories;
 using UniversityAcademicApi.Services;
 
@@ -14,6 +15,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 
 //Add repositories to the container.
@@ -30,6 +34,7 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
