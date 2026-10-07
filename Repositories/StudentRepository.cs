@@ -20,11 +20,20 @@ public class StudentRepository(ApplicationDbContext dbContext) : IStudentReposit
             ? true : false;
     }
 
-    public async Task<IEnumerable<Student>> GetAllStudentsAsync()
+    public async Task<(IEnumerable<Student> Students, int TotalCount)> GetAllStudentsAsync(
+    int pageNumber,
+    int pageSize)
     {
-        return await dbContext.Students.ToListAsync();
+        var totalCount = await dbContext.Students.CountAsync();
+
+        var students = await dbContext.Students
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (students, totalCount);
     }
-    
+
 
     public async Task<Student?> GetStudentByIdAsync(Guid id)
     {
