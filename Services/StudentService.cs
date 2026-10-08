@@ -4,16 +4,27 @@ using UniversityAcademicApi.Repositories;
 using UniversityAcademicApi.Exceptions;
 namespace UniversityAcademicApi.Services;
 
-public class StudentService(IStudentRepository studentRepository) : IStudentService
+public class StudentService(
+    IStudentRepository studentRepository,
+    ILogger<StudentService> logger)
+    : IStudentService
 {
     public async Task<ResponseModel<bool>> CreateStudentAsync(StudentCreateDto request)
     {
-         
+        logger.LogInformation(
+               "Creating student with matric number {MatricNumber}.",
+               request.MatricNumber);
+
         var checkIfStudentExists = await studentRepository.GetStudentByMatricNumberAsync(request.MatricNumber);
 
             if (checkIfStudentExists != null)
             {
-              throw new ConflictException("Student with the provided matric number already exists.");
+
+            logger.LogWarning(
+              "Student with matric number {MatricNumber} already exists.",
+              request.MatricNumber);
+
+            throw new ConflictException("Student with the provided matric number already exists.");
             }
 
             var student = new Student
@@ -27,6 +38,7 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
             };
 
             var created = await studentRepository.CreateStudentAsync(student);
+            
 
             return new ResponseModel<bool>
             {

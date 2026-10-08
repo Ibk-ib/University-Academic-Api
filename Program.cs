@@ -3,8 +3,16 @@ using UniversityAcademicApi.Data;
 using UniversityAcademicApi.Middleware;
 using UniversityAcademicApi.Repositories;
 using UniversityAcademicApi.Services;
+using Serilog;
+
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
