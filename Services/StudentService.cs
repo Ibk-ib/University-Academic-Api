@@ -1,7 +1,7 @@
 ﻿using UniversityAcademicApi.Data;
 using UniversityAcademicApi.DTOs;
 using UniversityAcademicApi.Repositories;
-
+using UniversityAcademicApi.Exceptions;
 namespace UniversityAcademicApi.Services;
 
 public class StudentService(IStudentRepository studentRepository) : IStudentService
@@ -13,12 +13,7 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
 
             if (checkIfStudentExists != null)
             {
-                return new ResponseModel<bool>
-                {
-                    Success = false,
-                    Message = "Student with the provided matric number already exists.",
-                    Data = false
-                };
+              throw new ConflictException("Student with the provided matric number already exists.");
             }
 
             var student = new Student
@@ -31,13 +26,13 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
                 Level = request.Level
             };
 
-            var result = await studentRepository.CreateStudentAsync(student);
+            var created = await studentRepository.CreateStudentAsync(student);
 
             return new ResponseModel<bool>
             {
-                Success = result,
-                Message = result ? "Student created successfully." : "Failed to create student.",
-                Data = result
+                Success = created,
+                Message = created ? "Student created successfully." : "Failed to create student.",
+                Data = created
             };
     }
 
@@ -46,12 +41,7 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
         var student = await studentRepository.GetStudentByIdAsync(id);
         if (student == null)
         {
-            return new ResponseModel<bool>
-            {
-                Success = false,
-                Message = "Student not found.",
-                Data = false
-            };
+            throw new NotFoundException("Student not found.");
         }
 
         var result = await studentRepository.DeleteStudentAsync(student);
@@ -108,12 +98,7 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
         var student = await studentRepository.GetStudentByIdAsync(id);
         if (student == null)
         {
-            return new ResponseModel<StudentDto?>
-            {
-                Success = false,
-                Message = "Student not found.",
-                Data = null
-            };
+            throw new NotFoundException("Student not found.");
         }
 
         var studentDto = new StudentDto
@@ -141,12 +126,7 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
         var student = await studentRepository.GetStudentByMatricNumberAsync(matricNumber);
         if (student == null)
         {
-            return new ResponseModel<StudentDto?>
-            {
-                Success = false,
-                Message = "Student not found.",
-                Data = null
-            };
+            throw new NotFoundException("Student not found.");
         }
 
         var studentDto = new StudentDto
@@ -173,12 +153,7 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
         var student = await studentRepository.GetStudentByIdAsync(id);
         if (student == null)
         {
-            return new ResponseModel<bool>
-            {
-                Success = false,
-                Message = "Student not found.",
-                Data = false
-            };
+            throw new NotFoundException("Student not found.");
         }
 
         // Update the student properties
