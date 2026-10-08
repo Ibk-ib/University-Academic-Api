@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
 using UniversityAcademicApi.Exceptions;
 
 
 namespace UniversityAcademicApi.Middleware;
 
 public class GlobalExceptionHandler 
-    (ILogger<GlobalExceptionHandler> logger, IProblemDetailsService problemDetailsService) : IExceptionHandler {
+    (ILogger<GlobalExceptionHandler> logger) : IExceptionHandler {
 
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
+        Console.WriteLine("GLOBAL EXCEPTION HANDLER WAS CALLED");
         logger.LogError(exception, "An unhandled exception occurred.");
 
         var (statusCode, title, detail) = exception switch
@@ -34,13 +34,7 @@ public class GlobalExceptionHandler
 
         problemDetails.Extensions["TraceId"] = httpContext.TraceIdentifier;
 
-        await problemDetailsService.WriteAsync(
-            new ProblemDetailsContext
-            {
-                HttpContext = httpContext,
-                ProblemDetails = problemDetails,
-                Exception = exception
-            });
+        await httpContext.Response.WriteAsJsonAsync(problemDetails);
 
         return true;
     }
