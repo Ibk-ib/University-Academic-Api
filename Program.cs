@@ -4,6 +4,8 @@ using UniversityAcademicApi.Middleware;
 using UniversityAcademicApi.Repositories;
 using UniversityAcademicApi.Services;
 using Serilog;
+using FluentValidation;
+using UniversityAcademicApi.Validators;
 
 
 Log.Logger = new LoggerConfiguration()
@@ -38,6 +40,8 @@ builder.Services.AddScoped<IStudentService, StudentService>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddValidatorsFromAssemblyContaining<
+    StudentCreateDtoValidator>();
 
 var app = builder.Build();
 app.UseSwagger();

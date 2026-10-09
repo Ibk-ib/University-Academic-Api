@@ -11,7 +11,6 @@ public class GlobalExceptionHandler
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        Console.WriteLine("GLOBAL EXCEPTION HANDLER WAS CALLED");
         logger.LogError(exception, "An unhandled exception occurred.");
 
         var (statusCode, title, detail) = exception switch
