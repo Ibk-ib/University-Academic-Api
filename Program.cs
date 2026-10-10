@@ -40,6 +40,11 @@ builder.Services.AddScoped<IStudentService, StudentService>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddScoped<FluentValidationFilter>();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.AddService<FluentValidationFilter>();
+});
 builder.Services.AddValidatorsFromAssemblyContaining<
     StudentCreateDtoValidator>();
 
